@@ -23,8 +23,7 @@ function startGame(sets) {
     isSetFinished = false;
     isMatchFinished = false;
 
-    // Default serve to Team A at start of match
-    setServe('A');
+    setServe('A'); // Default serve to Team A
 
     document.getElementById('setup-screen').classList.add('hidden');
     document.getElementById('scoreboard-screen').classList.remove('hidden');
@@ -39,14 +38,16 @@ function getTargetScore() {
 }
 
 function addPoint(team, event) {
-    // Prevent adding points if clicking on the team name to edit it, or if set is done
-    if (event.target.tagName === 'H2' || event.target.tagName === 'SPAN') return;
+    // Prevent point if clicking on the editable team name
+    if (event.target.closest('h2')) return;
+    
+    // Stop adding points if the set or match is over
     if (isSetFinished || isMatchFinished) return;
 
     if (team === 'A') scoreA++;
     if (team === 'B') scoreB++;
 
-    // Switch the serve to whoever just scored
+    // Switch serve to whoever just scored
     setServe(team);
 
     updateUI();
@@ -82,6 +83,7 @@ function winSet(winningTeam) {
     if (setsA === setsRequiredToWin || setsB === setsRequiredToWin) {
         isMatchFinished = true;
         showModal(`Match Ended!<br>Team ${winningTeam} Wins!`);
+        // We do NOT show the Next Set button, and we stay on this screen.
     } else {
         showModal(`Set Ended!<br>Team ${winningTeam} Wins Set ${currentSet}`);
         document.getElementById('next-set-btn').classList.remove('hidden');
@@ -108,7 +110,7 @@ function closeModal() {
     document.getElementById('custom-modal').classList.add('hidden');
 }
 
-/* Navigation Functions */
+/* Navigation & Reset Functions */
 function updateUI() {
     document.getElementById('score-a').innerText = scoreA;
     document.getElementById('score-b').innerText = scoreB;
@@ -120,8 +122,19 @@ function updateUI() {
 }
 
 function resetMatch() {
-    if(confirm("Are you sure you want to restart the current match? All scores will be lost.")) {
-        startGame(maxSets); // Restarts with the same format
+    if(confirm("Are you sure you want to restart the current match? All scores will reset to 0.")) {
+        // Zero out the variables but DO NOT go to the home screen
+        currentSet = 1;
+        scoreA = 0;
+        scoreB = 0;
+        setsA = 0;
+        setsB = 0;
+        isSetFinished = false;
+        isMatchFinished = false;
+        setServe('A'); 
+        
+        document.getElementById('next-set-btn').classList.add('hidden');
+        updateUI();
     }
 }
 

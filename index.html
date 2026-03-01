@@ -26,13 +26,19 @@
 
         <div class="scoreboard">
             <div class="team-card team-a" onclick="addPoint('A', event)">
-                <h2 contenteditable="true">Team A <span id="serve-a" class="serve-icon active">🏐</span></h2>
+                <div class="team-header">
+                    <h2 contenteditable="true">Team A</h2>
+                    <span id="serve-a" class="serve-icon active">🏐</span>
+                </div>
                 <div class="sets-won">Sets: <span id="sets-a">0</span></div>
                 <div class="score" id="score-a">0</div>
             </div>
 
             <div class="team-card team-b" onclick="addPoint('B', event)">
-                <h2 contenteditable="true">Team B <span id="serve-b" class="serve-icon">🏐</span></h2>
+                <div class="team-header">
+                    <h2 contenteditable="true">Team B</h2>
+                    <span id="serve-b" class="serve-icon">🏐</span>
+                </div>
                 <div class="sets-won">Sets: <span id="sets-b">0</span></div>
                 <div class="score" id="score-b">0</div>
             </div>

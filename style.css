@@ -23,11 +23,12 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 .team-card { flex: 1; background-color: #16213e; padding: 30px 10px; border-radius: 15px; cursor: pointer; user-select: none; transition: transform 0.1s; position: relative; }
 .team-card:active { transform: scale(0.97); }
 
-.team-card h2 { margin-bottom: 10px; font-size: 1.5rem; border-bottom: 1px dashed transparent; }
-.team-card h2:focus { outline: none; border-bottom: 1px dashed #e94560; }
+/* Team Header & Serve Icon */
+.team-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
+.team-header h2 { font-size: 1.5rem; border-bottom: 1px dashed transparent; }
+.team-header h2:focus { outline: none; border-bottom: 1px dashed #e94560; }
 
-/* Serve Icon */
-.serve-icon { opacity: 0; transition: opacity 0.3s; font-size: 1.2rem; margin-left: 8px; }
+.serve-icon { opacity: 0; transition: opacity 0.3s; font-size: 1.5rem; }
 .serve-icon.active { opacity: 1; }
 
 .sets-won { font-size: 1.2rem; color: #e94560; margin-bottom: 20px; font-weight: bold; }
