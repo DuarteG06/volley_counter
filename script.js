@@ -125,7 +125,7 @@ function updateUI() {
     document.getElementById('sets-a').innerText = setsA;
     document.getElementById('sets-b').innerText = setsB;
     
-    document.getElementById('match-status').innerText = `Set ${currentSet} of ${maxSets}`;
+    // Set 1 of 3 text removed from here entirely
     document.getElementById('points-target').innerText = getTargetScore();
 }
 
@@ -148,7 +148,7 @@ function showConfirmModal(message, action) {
 
 function closeConfirmModal() {
     document.getElementById('confirm-modal').classList.add('hidden');
-    pendingAction = null; // Clear the pending action
+    pendingAction = null; 
 }
 
 function executeConfirm() {
@@ -174,17 +174,14 @@ function executeConfirm() {
 
 /* Navigation & Reset Triggers */
 function resetMatch() {
-    // Replaces default confirm() with custom modal
     showConfirmModal("Are you sure you want to restart the match? All scores will reset to 0.", 'restart');
 }
 
 function goHome() {
     if (isMatchFinished) {
-        // If the match is already over, just go home without asking
         pendingAction = 'home';
         executeConfirm(); 
     } else {
-        // Replaces default confirm() with custom modal
         showConfirmModal("Are you sure you want to go Home? The current match will be lost.", 'home');
     }
 }

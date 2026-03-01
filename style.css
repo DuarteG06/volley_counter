@@ -15,8 +15,7 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 
 /* Scoreboard */
 .match-info { margin-bottom: 20px; }
-.match-info h2 { margin-bottom: 5px; color: #e94560; font-weight: bold; }
-.match-info p { color: #a2a2bd; }
+.match-info p { color: #a2a2bd; font-size: 1.2rem; }
 
 .scoreboard { display: flex; gap: 20px; margin-bottom: 30px; }
 
@@ -31,8 +30,8 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 .serve-icon { opacity: 0; transition: opacity 0.3s; font-size: 1.5rem; display: flex; align-items: center; line-height: 1; margin: 0; }
 .serve-icon.active { opacity: 1; }
 
-.sets-won { font-size: 1.2rem; color: #e94560; margin-bottom: 20px; font-weight: bold; }
-.score { font-size: 6rem; font-weight: bold; line-height: 1; margin-bottom: 15px; }
+.sets-won { font-size: 1.2rem; color: #e94560; margin-bottom: 15px; font-weight: bold; }
+.score { font-size: 10rem; font-weight: bold; line-height: 1; margin-bottom: 15px; }
 
 /* Undo Button */
 .undo-btn { padding: 8px 15px; font-size: 1rem; background-color: #0f3460; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.2s; }
@@ -59,6 +58,6 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 
 /* Mobile adjustments */
 @media (max-width: 600px) {
-    .score { font-size: 5rem; }
+    .score { font-size: 7.5rem; }
     .scoreboard { flex-direction: column; }
 }
