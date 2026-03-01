@@ -2,7 +2,7 @@
 let maxSets = 1;
 let currentSet = 1;
 let setsRequiredToWin = 1;
-let defaultTargetScore = 25; // Tells us if it's a 25 or 15 point game mode
+let defaultTargetScore = 25; 
 
 let scoreA = 0;
 let scoreB = 0;
@@ -11,8 +11,8 @@ let setsB = 0;
 
 let isSetFinished = false;
 let isMatchFinished = false;
+let currentServe = 'A'; // Tracks who has the serve for saving purposes
 
-// Keeps track of what the user is trying to do when a confirmation pops up
 let pendingAction = null;
 
 function startGame(sets, target) {
@@ -28,7 +28,7 @@ function startGame(sets, target) {
     isSetFinished = false;
     isMatchFinished = false;
 
-    setServe('A'); // Default serve to Team A
+    setServe('A'); 
 
     document.getElementById('setup-screen').classList.add('hidden');
     document.getElementById('scoreboard-screen').classList.remove('hidden');
@@ -40,11 +40,9 @@ function startGame(sets, target) {
 }
 
 function getTargetScore() {
-    // If it's a 25-point game, the final tiebreaker set (e.g. 5th set) goes to 15
     if (defaultTargetScore === 25 && currentSet === maxSets && maxSets > 1) {
         return 15;
     }
-    // Otherwise, use whatever the game mode target is
     return defaultTargetScore;
 }
 
@@ -84,6 +82,7 @@ function removePoint(team, event) {
 }
 
 function setServe(team) {
+    currentServe = team; // Remember who is serving for the save file
     const serveA = document.getElementById('serve-a');
     const serveB = document.getElementById('serve-b');
     
@@ -131,7 +130,6 @@ function startNextSet() {
 }
 
 function updateUI() {
-    // Safety checks added to completely prevent "null" errors
     const elScoreA = document.getElementById('score-a');
     if (elScoreA) elScoreA.innerText = scoreA;
 
@@ -146,9 +144,67 @@ function updateUI() {
 
     const elTarget = document.getElementById('points-target');
     if (elTarget) elTarget.innerText = getTargetScore();
+
+    // Save every time the UI updates!
+    saveData();
 }
 
-/* Modal Functions for Alerts (Okay) */
+/* --- LOCAL STORAGE (SAVE/LOAD) LOGIC --- */
+
+function saveData() {
+    const gameState = {
+        maxSets, currentSet, setsRequiredToWin, defaultTargetScore,
+        scoreA, scoreB, setsA, setsB, isSetFinished, isMatchFinished, currentServe,
+        nameA: document.getElementById('name-a') ? document.getElementById('name-a').innerText : "Team A",
+        nameB: document.getElementById('name-b') ? document.getElementById('name-b').innerText : "Team B",
+        isGameActive: !document.getElementById('scoreboard-screen').classList.contains('hidden')
+    };
+    localStorage.setItem('volleyData', JSON.stringify(gameState));
+}
+
+function loadData() {
+    const saved = localStorage.getItem('volleyData');
+    if (saved) {
+        const data = JSON.parse(saved);
+        
+        // Only restore if a game was actually in progress
+        if (data.isGameActive) {
+            maxSets = data.maxSets;
+            currentSet = data.currentSet;
+            setsRequiredToWin = data.setsRequiredToWin;
+            defaultTargetScore = data.defaultTargetScore;
+            scoreA = data.scoreA;
+            scoreB = data.scoreB;
+            setsA = data.setsA;
+            setsB = data.setsB;
+            isSetFinished = data.isSetFinished;
+            isMatchFinished = data.isMatchFinished;
+            currentServe = data.currentServe || 'A';
+            
+            document.getElementById('name-a').innerText = data.nameA || "Team A";
+            document.getElementById('name-b').innerText = data.nameB || "Team B";
+
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('scoreboard-screen').classList.remove('hidden');
+            
+            if (isSetFinished && !isMatchFinished) {
+                document.getElementById('next-set-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('next-set-btn').classList.add('hidden');
+            }
+            
+            setServe(currentServe);
+            updateUI(); 
+        }
+    }
+}
+
+// Automatically try to load data when the page opens
+window.onload = loadData;
+
+/* --------------------------------------- */
+
+/* Modal Functions */
 function showModal(message) {
     document.getElementById('modal-message').innerHTML = message;
     document.getElementById('custom-modal').classList.remove('hidden');
@@ -158,7 +214,6 @@ function closeModal() {
     document.getElementById('custom-modal').classList.add('hidden');
 }
 
-/* Modal Functions for Confirmation (Yes / Cancel) */
 function showConfirmModal(message, action) {
     document.getElementById('confirm-message').innerHTML = message;
     pendingAction = action;
@@ -186,12 +241,14 @@ function executeConfirm() {
     } else if (pendingAction === 'home') {
         document.getElementById('scoreboard-screen').classList.add('hidden');
         document.getElementById('setup-screen').classList.remove('hidden');
+        
+        // Resets the save so it knows you're at the home menu
+        saveData(); 
     }
     
     closeConfirmModal();
 }
 
-/* Navigation & Reset Triggers */
 function resetMatch() {
     showConfirmModal("Are you sure you want to restart the match? All scores will reset to 0.", 'restart');
 }
