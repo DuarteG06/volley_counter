@@ -2,6 +2,7 @@
 let maxSets = 1;
 let currentSet = 1;
 let setsRequiredToWin = 1;
+let defaultTargetScore = 25; // Tells us if it's a 25 or 15 point game mode
 
 let scoreA = 0;
 let scoreB = 0;
@@ -14,8 +15,9 @@ let isMatchFinished = false;
 // Keeps track of what the user is trying to do when a confirmation pops up
 let pendingAction = null;
 
-function startGame(sets) {
+function startGame(sets, target) {
     maxSets = sets;
+    defaultTargetScore = target;
     currentSet = 1;
     setsRequiredToWin = Math.ceil(sets / 2);
     
@@ -30,14 +32,20 @@ function startGame(sets) {
 
     document.getElementById('setup-screen').classList.add('hidden');
     document.getElementById('scoreboard-screen').classList.remove('hidden');
-    document.getElementById('next-set-btn').classList.add('hidden');
+    
+    const nextBtn = document.getElementById('next-set-btn');
+    if(nextBtn) nextBtn.classList.add('hidden');
     
     updateUI();
 }
 
 function getTargetScore() {
-    if (currentSet === maxSets && maxSets > 1) return 15;
-    return 25;
+    // If it's a 25-point game, the final tiebreaker set (e.g. 5th set) goes to 15
+    if (defaultTargetScore === 25 && currentSet === maxSets && maxSets > 1) {
+        return 15;
+    }
+    // Otherwise, use whatever the game mode target is
+    return defaultTargetScore;
 }
 
 function addPoint(team, event) {
@@ -76,11 +84,14 @@ function removePoint(team, event) {
 }
 
 function setServe(team) {
-    document.getElementById('serve-a').classList.remove('active');
-    document.getElementById('serve-b').classList.remove('active');
+    const serveA = document.getElementById('serve-a');
+    const serveB = document.getElementById('serve-b');
     
-    if (team === 'A') document.getElementById('serve-a').classList.add('active');
-    if (team === 'B') document.getElementById('serve-b').classList.add('active');
+    if(serveA) serveA.classList.remove('active');
+    if(serveB) serveB.classList.remove('active');
+    
+    if (team === 'A' && serveA) serveA.classList.add('active');
+    if (team === 'B' && serveB) serveB.classList.add('active');
 }
 
 function checkSetWin() {
@@ -120,13 +131,21 @@ function startNextSet() {
 }
 
 function updateUI() {
-    document.getElementById('score-a').innerText = scoreA;
-    document.getElementById('score-b').innerText = scoreB;
-    document.getElementById('sets-a').innerText = setsA;
-    document.getElementById('sets-b').innerText = setsB;
-    
-    // Set 1 of 3 text removed from here entirely
-    document.getElementById('points-target').innerText = getTargetScore();
+    // Safety checks added to completely prevent "null" errors
+    const elScoreA = document.getElementById('score-a');
+    if (elScoreA) elScoreA.innerText = scoreA;
+
+    const elScoreB = document.getElementById('score-b');
+    if (elScoreB) elScoreB.innerText = scoreB;
+
+    const elSetsA = document.getElementById('sets-a');
+    if (elSetsA) elSetsA.innerText = setsA;
+
+    const elSetsB = document.getElementById('sets-b');
+    if (elSetsB) elSetsB.innerText = setsB;
+
+    const elTarget = document.getElementById('points-target');
+    if (elTarget) elTarget.innerText = getTargetScore();
 }
 
 /* Modal Functions for Alerts (Okay) */

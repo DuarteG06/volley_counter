@@ -10,8 +10,11 @@ body { background-color: #1a1a2e; color: #ffffff; display: flex; justify-content
 h1 { margin-bottom: 20px; font-size: 2.5rem; color: #e94560; }
 h2 { margin-bottom: 30px; font-weight: 300; }
 
-.setup-buttons button { display: block; width: 100%; padding: 20px; margin: 10px 0; font-size: 1.5rem; background-color: #0f3460; color: white; border: none; border-radius: 10px; cursor: pointer; transition: background 0.3s; }
+.setup-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.setup-buttons button { width: 100%; padding: 20px; font-size: 1.2rem; background-color: #0f3460; color: white; border: none; border-radius: 10px; cursor: pointer; transition: background 0.3s; font-weight: bold; }
 .setup-buttons button:hover { background-color: #e94560; }
+.setup-buttons .alt-btn { background-color: #16213e; border: 2px solid #0f3460; }
+.setup-buttons .alt-btn:hover { background-color: #e94560; border-color: #e94560; }
 
 /* Scoreboard */
 .match-info { margin-bottom: 20px; }
@@ -31,7 +34,9 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 .serve-icon.active { opacity: 1; }
 
 .sets-won { font-size: 1.2rem; color: #e94560; margin-bottom: 15px; font-weight: bold; }
-.score { font-size: 10rem; font-weight: bold; line-height: 1; margin-bottom: 15px; }
+
+/* Massive Scores */
+.score { font-size: 12rem; font-weight: bold; line-height: 1; margin-bottom: 15px; }
 
 /* Undo Button */
 .undo-btn { padding: 8px 15px; font-size: 1rem; background-color: #0f3460; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.2s; }
@@ -58,6 +63,7 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 
 /* Mobile adjustments */
 @media (max-width: 600px) {
-    .score { font-size: 7.5rem; }
+    .setup-buttons { grid-template-columns: 1fr; gap: 10px; }
+    .score { font-size: 9rem; }
     .scoreboard { flex-direction: column; }
 }

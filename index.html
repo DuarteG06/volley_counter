@@ -10,11 +10,15 @@
 
     <div id="setup-screen" class="container">
         <h1>Volleyball Scorekeeper</h1>
-        <h2>Select Match Length</h2>
+        <h2>Select Match Format</h2>
         <div class="setup-buttons">
-            <button onclick="startGame(1)">1 Set Game</button>
-            <button onclick="startGame(3)">Best of 3 Sets</button>
-            <button onclick="startGame(5)">Best of 5 Sets</button>
+            <button onclick="startGame(1, 25)">1 Set (to 25)</button>
+            <button onclick="startGame(3, 25)">Best of 3 (to 25)</button>
+            <button onclick="startGame(5, 25)">Best of 5 (to 25)</button>
+            
+            <button class="alt-btn" onclick="startGame(1, 15)">1 Set (to 15)</button>
+            <button class="alt-btn" onclick="startGame(3, 15)">Best of 3 (to 15)</button>
+            <button class="alt-btn" onclick="startGame(5, 15)">Best of 5 (to 15)</button>
         </div>
     </div>
 
