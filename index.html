@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volleyball Scorekeeper</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="setup-screen" class="container">
+        <h1>Volleyball Scorekeeper</h1>
+        <h2>Select Match Length</h2>
+        <div class="setup-buttons">
+            <button onclick="startGame(1)">1 Set Game</button>
+            <button onclick="startGame(3)">Best of 3 Sets</button>
+            <button onclick="startGame(5)">Best of 5 Sets</button>
+        </div>
+    </div>
+
+    <div id="scoreboard-screen" class="container hidden">
+        <div class="match-info">
+            <h2 id="match-status">Set 1</h2>
+            <p>Target: <span id="points-target">25</span> points (Win by 2)</p>
+        </div>
+
+        <div class="scoreboard">
+            <div class="team-card team-a" onclick="addPoint('A')">
+                <h2 contenteditable="true">Team A</h2>
+                <div class="sets-won">Sets: <span id="sets-a">0</span></div>
+                <div class="score" id="score-a">0</div>
+            </div>
+
+            <div class="team-card team-b" onclick="addPoint('B')">
+                <h2 contenteditable="true">Team B</h2>
+                <div class="sets-won">Sets: <span id="sets-b">0</span></div>
+                <div class="score" id="score-b">0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="danger-btn" onclick="resetMatch()">Reset Match</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

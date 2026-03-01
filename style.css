@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #1a1a2e;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Setup Screen */
+h1 { margin-bottom: 20px; font-size: 2.5rem; color: #e94560; }
+h2 { margin-bottom: 30px; font-weight: 300; }
+
+.setup-buttons button {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    margin: 10px 0;
+    font-size: 1.5rem;
+    background-color: #0f3460;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.setup-buttons button:hover {
+    background-color: #e94560;
+}
+
+/* Scoreboard */
+.match-info { margin-bottom: 20px; }
+.match-info h2 { margin-bottom: 5px; color: #e94560; font-weight: bold; }
+.match-info p { color: #a2a2bd; }
+
+.scoreboard {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.team-card {
+    flex: 1;
+    background-color: #16213e;
+    padding: 30px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.1s;
+}
+
+.team-card:active {
+    transform: scale(0.97);
+}
+
+.team-card h2 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    border-bottom: 1px dashed transparent;
+}
+
+.team-card h2:focus {
+    outline: none;
+    border-bottom: 1px dashed #e94560;
+}
+
+.sets-won {
+    font-size: 1.2rem;
+    color: #e94560;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.score {
+    font-size: 6rem;
+    font-weight: bold;
+}
+
+.controls button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.danger-btn {
+    background-color: #e94560;
+    color: white;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    .score { font-size: 5rem; }
+    .scoreboard { flex-direction: column; }
+}
