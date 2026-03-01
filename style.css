@@ -21,6 +21,7 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 .match-info p { color: #a2a2bd; font-size: 1.2rem; }
 
 .scoreboard { display: flex; gap: 20px; margin-bottom: 30px; }
+.scoreboard.swapped { flex-direction: row-reverse; } /* CSS trick to swap sides instantly */
 
 .team-card { flex: 1; background-color: #16213e; padding: 30px 10px; border-radius: 15px; cursor: pointer; user-select: none; transition: transform 0.1s; position: relative; }
 .team-card:active { transform: scale(0.97); }
@@ -66,4 +67,5 @@ h2 { margin-bottom: 30px; font-weight: 300; }
     .setup-buttons { grid-template-columns: 1fr; gap: 10px; }
     .score { font-size: 9rem; }
     .scoreboard { flex-direction: column; }
+    .scoreboard.swapped { flex-direction: column-reverse; } /* Swap top and bottom on mobile */
 }

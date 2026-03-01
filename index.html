@@ -24,7 +24,7 @@
 
     <div id="scoreboard-screen" class="container hidden">
         <div class="match-info">
-            <p>Target: <span id="points-target">25</span> points (Win by 2)</p>
+            <p>Target: <span id="points-target">25</span> points (Win by 2)<span id="match-format-text"></span></p>
         </div>
 
         <div class="scoreboard">
@@ -51,6 +51,7 @@
 
         <div class="controls">
             <button class="nav-btn" onclick="goHome()">🏠 Home</button>
+            <button class="action-btn" onclick="swapSides()">🔄 Swap Sides</button>
             <button id="next-set-btn" class="action-btn hidden" onclick="startNextSet()">Next Set ➡️</button>
             <button class="danger-btn" onclick="resetMatch()">Restart Match</button>
         </div>

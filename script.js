@@ -11,7 +11,8 @@ let setsB = 0;
 
 let isSetFinished = false;
 let isMatchFinished = false;
-let currentServe = 'A'; // Tracks who has the serve for saving purposes
+let currentServe = 'A'; 
+let isSwapped = false; // Tracks if the court is visually flipped
 
 let pendingAction = null;
 
@@ -27,6 +28,7 @@ function startGame(sets, target) {
     setsB = 0;
     isSetFinished = false;
     isMatchFinished = false;
+    isSwapped = false; // Reset court sides on new game
 
     setServe('A'); 
 
@@ -82,7 +84,7 @@ function removePoint(team, event) {
 }
 
 function setServe(team) {
-    currentServe = team; // Remember who is serving for the save file
+    currentServe = team; 
     const serveA = document.getElementById('serve-a');
     const serveB = document.getElementById('serve-b');
     
@@ -129,6 +131,11 @@ function startNextSet() {
     updateUI();
 }
 
+function swapSides() {
+    isSwapped = !isSwapped;
+    updateUI();
+}
+
 function updateUI() {
     const elScoreA = document.getElementById('score-a');
     if (elScoreA) elScoreA.innerText = scoreA;
@@ -145,7 +152,22 @@ function updateUI() {
     const elTarget = document.getElementById('points-target');
     if (elTarget) elTarget.innerText = getTargetScore();
 
-    // Save every time the UI updates!
+    // Add match format text (e.g., " - Best of 3 sets")
+    const elFormatText = document.getElementById('match-format-text');
+    if (elFormatText) {
+        elFormatText.innerText = maxSets > 1 ? ` - Best of ${maxSets} sets` : ` - 1 Set Game`;
+    }
+
+    // Apply the swap sides trick
+    const scoreboard = document.querySelector('.scoreboard');
+    if (scoreboard) {
+        if (isSwapped) {
+            scoreboard.classList.add('swapped');
+        } else {
+            scoreboard.classList.remove('swapped');
+        }
+    }
+
     saveData();
 }
 
@@ -154,7 +176,7 @@ function updateUI() {
 function saveData() {
     const gameState = {
         maxSets, currentSet, setsRequiredToWin, defaultTargetScore,
-        scoreA, scoreB, setsA, setsB, isSetFinished, isMatchFinished, currentServe,
+        scoreA, scoreB, setsA, setsB, isSetFinished, isMatchFinished, currentServe, isSwapped,
         nameA: document.getElementById('name-a') ? document.getElementById('name-a').innerText : "Team A",
         nameB: document.getElementById('name-b') ? document.getElementById('name-b').innerText : "Team B",
         isGameActive: !document.getElementById('scoreboard-screen').classList.contains('hidden')
@@ -167,7 +189,6 @@ function loadData() {
     if (saved) {
         const data = JSON.parse(saved);
         
-        // Only restore if a game was actually in progress
         if (data.isGameActive) {
             maxSets = data.maxSets;
             currentSet = data.currentSet;
@@ -180,6 +201,7 @@ function loadData() {
             isSetFinished = data.isSetFinished;
             isMatchFinished = data.isMatchFinished;
             currentServe = data.currentServe || 'A';
+            isSwapped = data.isSwapped || false; // Load the swapped state
             
             document.getElementById('name-a').innerText = data.nameA || "Team A";
             document.getElementById('name-b').innerText = data.nameB || "Team B";
@@ -199,10 +221,7 @@ function loadData() {
     }
 }
 
-// Automatically try to load data when the page opens
 window.onload = loadData;
-
-/* --------------------------------------- */
 
 /* Modal Functions */
 function showModal(message) {
@@ -234,6 +253,7 @@ function executeConfirm() {
         setsB = 0;
         isSetFinished = false;
         isMatchFinished = false;
+        isSwapped = false; // Reset visual swap on match restart
         setServe('A'); 
         
         document.getElementById('next-set-btn').classList.add('hidden');
@@ -241,8 +261,6 @@ function executeConfirm() {
     } else if (pendingAction === 'home') {
         document.getElementById('scoreboard-screen').classList.add('hidden');
         document.getElementById('setup-screen').classList.remove('hidden');
-        
-        // Resets the save so it knows you're at the home menu
         saveData(); 
     }
     
