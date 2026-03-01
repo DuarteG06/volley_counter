@@ -8,44 +8,62 @@ let scoreB = 0;
 let setsA = 0;
 let setsB = 0;
 
+let isSetFinished = false;
+let isMatchFinished = false;
+
 function startGame(sets) {
     maxSets = sets;
     currentSet = 1;
-    setsRequiredToWin = Math.ceil(sets / 2); // e.g., Best of 5 needs 3 to win
+    setsRequiredToWin = Math.ceil(sets / 2);
     
     scoreA = 0;
     scoreB = 0;
     setsA = 0;
     setsB = 0;
+    isSetFinished = false;
+    isMatchFinished = false;
 
-    // Switch screens
+    // Default serve to Team A at start of match
+    setServe('A');
+
     document.getElementById('setup-screen').classList.add('hidden');
     document.getElementById('scoreboard-screen').classList.remove('hidden');
+    document.getElementById('next-set-btn').classList.add('hidden');
     
     updateUI();
 }
 
 function getTargetScore() {
-    // If it's a tiebreaker set (e.g., 5th set in a 5-set game, or 3rd in a 3-set game)
-    if (currentSet === maxSets && maxSets > 1) {
-        return 15;
-    }
-    // Standard sets go to 25
+    if (currentSet === maxSets && maxSets > 1) return 15;
     return 25;
 }
 
-function addPoint(team) {
+function addPoint(team, event) {
+    // Prevent adding points if clicking on the team name to edit it, or if set is done
+    if (event.target.tagName === 'H2' || event.target.tagName === 'SPAN') return;
+    if (isSetFinished || isMatchFinished) return;
+
     if (team === 'A') scoreA++;
     if (team === 'B') scoreB++;
 
-    checkSetWin();
+    // Switch the serve to whoever just scored
+    setServe(team);
+
     updateUI();
+    checkSetWin();
+}
+
+function setServe(team) {
+    document.getElementById('serve-a').classList.remove('active');
+    document.getElementById('serve-b').classList.remove('active');
+    
+    if (team === 'A') document.getElementById('serve-a').classList.add('active');
+    if (team === 'B') document.getElementById('serve-b').classList.add('active');
 }
 
 function checkSetWin() {
     const target = getTargetScore();
     
-    // Check if either team has reached the target AND has a 2-point lead
     if (scoreA >= target && (scoreA - scoreB) >= 2) {
         winSet('A');
     } else if (scoreB >= target && (scoreB - scoreA) >= 2) {
@@ -54,27 +72,43 @@ function checkSetWin() {
 }
 
 function winSet(winningTeam) {
+    isSetFinished = true;
+    
     if (winningTeam === 'A') setsA++;
     if (winningTeam === 'B') setsB++;
+    updateUI();
 
-    // Check if the whole match is over
-    if (setsA === setsRequiredToWin) {
-        alert("Team A wins the match!");
-        resetToMenu();
-        return;
-    } else if (setsB === setsRequiredToWin) {
-        alert("Team B wins the match!");
-        resetToMenu();
-        return;
+    // Check if the match is completely over
+    if (setsA === setsRequiredToWin || setsB === setsRequiredToWin) {
+        isMatchFinished = true;
+        showModal(`Match Ended!<br>Team ${winningTeam} Wins!`);
+    } else {
+        showModal(`Set Ended!<br>Team ${winningTeam} Wins Set ${currentSet}`);
+        document.getElementById('next-set-btn').classList.remove('hidden');
     }
+}
 
-    // Move to next set
+function startNextSet() {
     currentSet++;
     scoreA = 0;
     scoreB = 0;
-    alert(`Set won by Team ${winningTeam}! Moving to Set ${currentSet}.`);
+    isSetFinished = false;
+    
+    document.getElementById('next-set-btn').classList.add('hidden');
+    updateUI();
 }
 
+/* Modal Functions */
+function showModal(message) {
+    document.getElementById('modal-message').innerHTML = message;
+    document.getElementById('custom-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('custom-modal').classList.add('hidden');
+}
+
+/* Navigation Functions */
 function updateUI() {
     document.getElementById('score-a').innerText = scoreA;
     document.getElementById('score-b').innerText = scoreB;
@@ -86,12 +120,14 @@ function updateUI() {
 }
 
 function resetMatch() {
-    if(confirm("Are you sure you want to reset the current match?")) {
-        resetToMenu();
+    if(confirm("Are you sure you want to restart the current match? All scores will be lost.")) {
+        startGame(maxSets); // Restarts with the same format
     }
 }
 
-function resetToMenu() {
-    document.getElementById('scoreboard-screen').classList.add('hidden');
-    document.getElementById('setup-screen').classList.remove('hidden');
+function goHome() {
+    if(isMatchFinished || confirm("Are you sure you want to go Home? The current match will be lost.")) {
+        document.getElementById('scoreboard-screen').classList.add('hidden');
+        document.getElementById('setup-screen').classList.remove('hidden');
+    }
 }
