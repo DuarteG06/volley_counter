@@ -38,8 +38,8 @@ function getTargetScore() {
 }
 
 function addPoint(team, event) {
-    // Prevent point if clicking on the editable team name
-    if (event.target.closest('h2')) return;
+    // Prevent point if clicking on the editable team name or undo button
+    if (event.target.closest('.team-header') || event.target.closest('.undo-btn')) return;
     
     // Stop adding points if the set or match is over
     if (isSetFinished || isMatchFinished) return;
@@ -52,6 +52,34 @@ function addPoint(team, event) {
 
     updateUI();
     checkSetWin();
+}
+
+function removePoint(team, event) {
+    // Stop the click from triggering the main team card click
+    event.stopPropagation();
+
+    // Prevent undoing if the whole match is already completely finished
+    if (isMatchFinished) return;
+
+    if (team === 'A' && scoreA > 0) {
+        // If undoing reverses a set win
+        if (isSetFinished && scoreA > scoreB) {
+            setsA--;
+            isSetFinished = false;
+            document.getElementById('next-set-btn').classList.add('hidden');
+        }
+        scoreA--;
+    } else if (team === 'B' && scoreB > 0) {
+        // If undoing reverses a set win
+        if (isSetFinished && scoreB > scoreA) {
+            setsB--;
+            isSetFinished = false;
+            document.getElementById('next-set-btn').classList.add('hidden');
+        }
+        scoreB--;
+    }
+
+    updateUI();
 }
 
 function setServe(team) {
@@ -83,7 +111,6 @@ function winSet(winningTeam) {
     if (setsA === setsRequiredToWin || setsB === setsRequiredToWin) {
         isMatchFinished = true;
         showModal(`Match Ended!<br>Team ${winningTeam} Wins!`);
-        // We do NOT show the Next Set button, and we stay on this screen.
     } else {
         showModal(`Set Ended!<br>Team ${winningTeam} Wins Set ${currentSet}`);
         document.getElementById('next-set-btn').classList.remove('hidden');
@@ -123,7 +150,6 @@ function updateUI() {
 
 function resetMatch() {
     if(confirm("Are you sure you want to restart the current match? All scores will reset to 0.")) {
-        // Zero out the variables but DO NOT go to the home screen
         currentSet = 1;
         scoreA = 0;
         scoreB = 0;

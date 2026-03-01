@@ -24,15 +24,19 @@ h2 { margin-bottom: 30px; font-weight: 300; }
 .team-card:active { transform: scale(0.97); }
 
 /* Team Header & Serve Icon */
-.team-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; }
-.team-header h2 { font-size: 1.5rem; border-bottom: 1px dashed transparent; }
+.team-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; height: 40px; }
+.team-header h2 { font-size: 1.5rem; border-bottom: 1px dashed transparent; margin: 0; line-height: 1; }
 .team-header h2:focus { outline: none; border-bottom: 1px dashed #e94560; }
 
-.serve-icon { opacity: 0; transition: opacity 0.3s; font-size: 1.5rem; }
+.serve-icon { opacity: 0; transition: opacity 0.3s; font-size: 1.5rem; display: flex; align-items: center; line-height: 1; margin: 0; }
 .serve-icon.active { opacity: 1; }
 
 .sets-won { font-size: 1.2rem; color: #e94560; margin-bottom: 20px; font-weight: bold; }
-.score { font-size: 6rem; font-weight: bold; }
+.score { font-size: 6rem; font-weight: bold; line-height: 1; margin-bottom: 15px; }
+
+/* Undo Button */
+.undo-btn { padding: 8px 15px; font-size: 1rem; background-color: #0f3460; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+.undo-btn:hover { background-color: #a2a2bd; }
 
 /* Controls */
 .controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
