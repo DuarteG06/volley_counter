@@ -11,6 +11,9 @@ let setsB = 0;
 let isSetFinished = false;
 let isMatchFinished = false;
 
+// Keeps track of what the user is trying to do when a confirmation pops up
+let pendingAction = null;
+
 function startGame(sets) {
     maxSets = sets;
     currentSet = 1;
@@ -38,31 +41,22 @@ function getTargetScore() {
 }
 
 function addPoint(team, event) {
-    // Prevent point if clicking on the editable team name or undo button
     if (event.target.closest('.team-header') || event.target.closest('.undo-btn')) return;
-    
-    // Stop adding points if the set or match is over
     if (isSetFinished || isMatchFinished) return;
 
     if (team === 'A') scoreA++;
     if (team === 'B') scoreB++;
 
-    // Switch serve to whoever just scored
     setServe(team);
-
     updateUI();
     checkSetWin();
 }
 
 function removePoint(team, event) {
-    // Stop the click from triggering the main team card click
     event.stopPropagation();
-
-    // Prevent undoing if the whole match is already completely finished
     if (isMatchFinished) return;
 
     if (team === 'A' && scoreA > 0) {
-        // If undoing reverses a set win
         if (isSetFinished && scoreA > scoreB) {
             setsA--;
             isSetFinished = false;
@@ -70,7 +64,6 @@ function removePoint(team, event) {
         }
         scoreA--;
     } else if (team === 'B' && scoreB > 0) {
-        // If undoing reverses a set win
         if (isSetFinished && scoreB > scoreA) {
             setsB--;
             isSetFinished = false;
@@ -107,7 +100,6 @@ function winSet(winningTeam) {
     if (winningTeam === 'B') setsB++;
     updateUI();
 
-    // Check if the match is completely over
     if (setsA === setsRequiredToWin || setsB === setsRequiredToWin) {
         isMatchFinished = true;
         showModal(`Match Ended!<br>Team ${winningTeam} Wins!`);
@@ -127,17 +119,6 @@ function startNextSet() {
     updateUI();
 }
 
-/* Modal Functions */
-function showModal(message) {
-    document.getElementById('modal-message').innerHTML = message;
-    document.getElementById('custom-modal').classList.remove('hidden');
-}
-
-function closeModal() {
-    document.getElementById('custom-modal').classList.add('hidden');
-}
-
-/* Navigation & Reset Functions */
 function updateUI() {
     document.getElementById('score-a').innerText = scoreA;
     document.getElementById('score-b').innerText = scoreB;
@@ -148,8 +129,30 @@ function updateUI() {
     document.getElementById('points-target').innerText = getTargetScore();
 }
 
-function resetMatch() {
-    if(confirm("Are you sure you want to restart the current match? All scores will reset to 0.")) {
+/* Modal Functions for Alerts (Okay) */
+function showModal(message) {
+    document.getElementById('modal-message').innerHTML = message;
+    document.getElementById('custom-modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('custom-modal').classList.add('hidden');
+}
+
+/* Modal Functions for Confirmation (Yes / Cancel) */
+function showConfirmModal(message, action) {
+    document.getElementById('confirm-message').innerHTML = message;
+    pendingAction = action;
+    document.getElementById('confirm-modal').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+    pendingAction = null; // Clear the pending action
+}
+
+function executeConfirm() {
+    if (pendingAction === 'restart') {
         currentSet = 1;
         scoreA = 0;
         scoreB = 0;
@@ -161,12 +164,27 @@ function resetMatch() {
         
         document.getElementById('next-set-btn').classList.add('hidden');
         updateUI();
+    } else if (pendingAction === 'home') {
+        document.getElementById('scoreboard-screen').classList.add('hidden');
+        document.getElementById('setup-screen').classList.remove('hidden');
     }
+    
+    closeConfirmModal();
+}
+
+/* Navigation & Reset Triggers */
+function resetMatch() {
+    // Replaces default confirm() with custom modal
+    showConfirmModal("Are you sure you want to restart the match? All scores will reset to 0.", 'restart');
 }
 
 function goHome() {
-    if(isMatchFinished || confirm("Are you sure you want to go Home? The current match will be lost.")) {
-        document.getElementById('scoreboard-screen').classList.add('hidden');
-        document.getElementById('setup-screen').classList.remove('hidden');
+    if (isMatchFinished) {
+        // If the match is already over, just go home without asking
+        pendingAction = 'home';
+        executeConfirm(); 
+    } else {
+        // Replaces default confirm() with custom modal
+        showConfirmModal("Are you sure you want to go Home? The current match will be lost.", 'home');
     }
 }

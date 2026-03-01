@@ -60,6 +60,16 @@
         </div>
     </div>
 
+    <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 id="confirm-message" style="font-size: 1.5rem;">Are you sure?</h2>
+            <div class="confirm-buttons">
+                <button onclick="executeConfirm()" class="danger-btn">Yes</button>
+                <button onclick="closeConfirmModal()" class="nav-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
