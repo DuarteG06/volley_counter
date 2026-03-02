@@ -8,6 +8,7 @@ let scoreA = 0;
 let scoreB = 0;
 let setsA = 0;
 let setsB = 0;
+let previousSets = []; 
 
 let isSetFinished = false;
 let isMatchFinished = false;
@@ -26,6 +27,7 @@ function startGame(sets, target) {
     scoreB = 0;
     setsA = 0;
     setsB = 0;
+    previousSets = [];
     isSetFinished = false;
     isMatchFinished = false;
     isSwapped = false; // Reset court sides on new game
@@ -62,12 +64,17 @@ function addPoint(team, event) {
 
 function removePoint(team, event) {
     event.stopPropagation();
-    if (isMatchFinished) return;
+    
+    // Allow undoing even if match is finished
+    if (isMatchFinished) {
+        isMatchFinished = false;
+    }
 
     if (team === 'A' && scoreA > 0) {
         if (isSetFinished && scoreA > scoreB) {
             setsA--;
             isSetFinished = false;
+            previousSets.pop();
             document.getElementById('next-set-btn').classList.add('hidden');
         }
         scoreA--;
@@ -75,6 +82,7 @@ function removePoint(team, event) {
         if (isSetFinished && scoreB > scoreA) {
             setsB--;
             isSetFinished = false;
+            previousSets.pop();
             document.getElementById('next-set-btn').classList.add('hidden');
         }
         scoreB--;
@@ -110,6 +118,10 @@ function winSet(winningTeam) {
     
     if (winningTeam === 'A') setsA++;
     if (winningTeam === 'B') setsB++;
+
+    // Record the completed set scores
+    previousSets.push({ scoreA, scoreB });
+    
     updateUI();
 
     if (setsA === setsRequiredToWin || setsB === setsRequiredToWin) {
@@ -168,7 +180,28 @@ function updateUI() {
         }
     }
 
+    updatePreviousSetsUI();
     saveData();
+}
+
+function updatePreviousSetsUI() {
+    const container = document.getElementById('previous-sets');
+    if (!container) return;
+
+    if (previousSets.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    let html = '<h3>Set Scores</h3><div class="sets-list">';
+    previousSets.forEach((set, index) => {
+        // Correct scores depending on side swap
+        const displayA = isSwapped ? set.scoreB : set.scoreA;
+        const displayB = isSwapped ? set.scoreA : set.scoreB;
+        html += `<div class="set-item">Set ${index + 1}: <span>${displayA} - ${displayB}</span></div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
 }
 
 /* --- LOCAL STORAGE (SAVE/LOAD) LOGIC --- */
@@ -176,7 +209,7 @@ function updateUI() {
 function saveData() {
     const gameState = {
         maxSets, currentSet, setsRequiredToWin, defaultTargetScore,
-        scoreA, scoreB, setsA, setsB, isSetFinished, isMatchFinished, currentServe, isSwapped,
+        scoreA, scoreB, setsA, setsB, previousSets, isSetFinished, isMatchFinished, currentServe, isSwapped,
         nameA: document.getElementById('name-a') ? document.getElementById('name-a').innerText : "Team A",
         nameB: document.getElementById('name-b') ? document.getElementById('name-b').innerText : "Team B",
         isGameActive: !document.getElementById('scoreboard-screen').classList.contains('hidden')
@@ -198,6 +231,7 @@ function loadData() {
             scoreB = data.scoreB;
             setsA = data.setsA;
             setsB = data.setsB;
+            previousSets = data.previousSets || [];
             isSetFinished = data.isSetFinished;
             isMatchFinished = data.isMatchFinished;
             currentServe = data.currentServe || 'A';
@@ -251,6 +285,7 @@ function executeConfirm() {
         scoreB = 0;
         setsA = 0;
         setsB = 0;
+        previousSets = [];
         isSetFinished = false;
         isMatchFinished = false;
         isSwapped = false; // Reset visual swap on match restart
