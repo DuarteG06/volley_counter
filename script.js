@@ -44,7 +44,7 @@ function startGame(sets, target) {
 }
 
 function getTargetScore() {
-    if (defaultTargetScore === 25 && currentSet === maxSets && maxSets > 1) {
+    if (defaultTargetScore === 25 && currentSet === maxSets && maxSets === 5) {
         return 15;
     }
     return defaultTargetScore;
